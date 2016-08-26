@@ -1,4 +1,4 @@
-package com.wooz86;
+package com.wooz86.musiclookup;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

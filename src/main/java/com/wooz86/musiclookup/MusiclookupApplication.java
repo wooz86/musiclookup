@@ -1,4 +1,4 @@
-package com.wooz86;
+package com.wooz86.musiclookup;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,3 +10,5 @@ public class MusiclookupApplication {
 		SpringApplication.run(MusiclookupApplication.class, args);
 	}
 }
+
+
