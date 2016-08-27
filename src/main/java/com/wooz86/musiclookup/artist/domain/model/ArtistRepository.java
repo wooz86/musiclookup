@@ -4,7 +4,8 @@ import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApiExcept
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzException;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public interface ArtistRepository {
-    Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException;
+    Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException, ExecutionException, InterruptedException;
 }

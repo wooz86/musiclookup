@@ -1,25 +1,24 @@
 package com.wooz86.musiclookup.artist.infrastructure;
 
-import com.wooz86.musiclookup.artist.domain.model.Album;
 import com.wooz86.musiclookup.artist.domain.model.Artist;
-import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.CoverArtArchiveException;
 import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.CoverArtArchiveService;
 import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApi;
 import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApiException;
 import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiPage;
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzException;
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzService;
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.ReleaseGroup;
+import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.MusicBrainzArtist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Component
-public class ArtistRemoteService {
+class ArtistRemoteService {
 
     private MusicBrainzService musicBrainzService;
     private MediaWikiApi wikipediaService;
@@ -36,52 +35,29 @@ public class ArtistRemoteService {
         this.coverArtArchiveService = coverArtArchiveService;
     }
 
-    public Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException {
-        com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.Artist MBArtist = getArtistByMBId(mbid);
+    public Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException, ExecutionException, InterruptedException {
+        return getArtistByMBIDAsync(mbid);
+    }
 
+    @Async
+    private Artist getArtistByMBIDAsync(UUID mbid) throws MusicBrainzException, MediaWikiApiException, InterruptedException, ExecutionException {
+        MusicBrainzArtist musicBrainzArtist = musicBrainzService.getByMBId(mbid);
+        String pageTitle = musicBrainzService.getWikipediaPageTitleForArtist(musicBrainzArtist);
 
-        String pageTitleForArtist = musicBrainzService.getWikipediaPageTitleForArtist(MBArtist);
-        String artistDescription = getArtistDescription(pageTitleForArtist);
-        List<ReleaseGroup> albums = getAlbums(MBArtist);
+        Future<MediaWikiPage> mediaWikiPage = getMediaWikiPage(pageTitle);
 
-        List<Album> als = new ArrayList<>();
-
-        Artist artist = new Artist(mbid, artistDescription);
-
-        for(ReleaseGroup album : albums) {
-            String albumCover = getAlbumCoverUrlByMBID(album.getId());
-            Album newAl = new Album(album.getId(), album.getTitle(), albumCover);
-            artist.addAlbum(newAl);
+        // Wait until they are all done
+        while (!mediaWikiPage.isDone()) {
+            Thread.sleep(10); //10-millisecond pause between each check
         }
 
-        return artist;
+        String description = mediaWikiPage.get().getExtract();
+
+        return new Artist(mbid, description);
     }
 
-    private List<ReleaseGroup> getAlbums(com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.Artist artistByMBId) {
-        List<ReleaseGroup> albums = artistByMBId.getReleaseGroups()
-                .stream()
-                .filter(p -> p.getPrimaryType().equals("Album"))
-                .collect(Collectors.toList());
-
-        return albums;
-    }
-
-    private com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.Artist getArtistByMBId(UUID mbid) throws MusicBrainzException {
-        com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.Artist byMBId = musicBrainzService.getByMBId(mbid);
-
-        return byMBId;
-    }
-
-    private String getArtistDescription(String pageTitle) throws MediaWikiApiException {
-        MediaWikiPage wikipediaPage = wikipediaService.getPageByTitle(pageTitle);
-        return wikipediaPage.getExtract();
-    }
-
-    private String getAlbumCoverUrlByMBID(UUID mbid) {
-        try {
-            return coverArtArchiveService.getImageUrlByMBID(mbid);
-        } catch (CoverArtArchiveException e) {
-            return null;
-        }
+    @Async
+    private Future<MediaWikiPage> getMediaWikiPage(String pageTitle) throws MediaWikiApiException {
+        return new AsyncResult<>(wikipediaService.getPageByTitle(pageTitle));
     }
 }

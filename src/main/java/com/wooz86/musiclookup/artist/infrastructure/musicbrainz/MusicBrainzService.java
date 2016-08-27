@@ -1,6 +1,6 @@
 package com.wooz86.musiclookup.artist.infrastructure.musicbrainz;
 
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.Artist;
+import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.MusicBrainzArtist;
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.Relation;
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.Url;
 import org.slf4j.Logger;
@@ -28,22 +28,22 @@ public class MusicBrainzService {
         this.restClient = restClient;
     }
 
-    public Artist getByMBId(UUID mbid) throws MusicBrainzException {
+    public MusicBrainzArtist getByMBId(UUID mbid) throws MusicBrainzException {
         String requestUrl = buildRequestUrl(mbid);
-        Artist artist = dispatchRequest(requestUrl);
+        MusicBrainzArtist artist = dispatchRequest(requestUrl);
 
         return artist;
     }
 
-    private Artist dispatchRequest(String requestUrl) throws MusicBrainzException {
+    private MusicBrainzArtist dispatchRequest(String requestUrl) throws MusicBrainzException {
         try {
-            return restClient.getForObject(requestUrl, Artist.class);
+            return restClient.getForObject(requestUrl, MusicBrainzArtist.class);
         } catch (Exception e) {
             throw new MusicBrainzException("MusicBrainz API-request failed.", e);
         }
     }
 
-    public String getWikipediaPageTitleForArtist(Artist artist) throws MusicBrainzException {
+    public String getWikipediaPageTitleForArtist(MusicBrainzArtist artist) throws MusicBrainzException {
         String url = getRelationByTypeForArtist(artist, "wikipedia")
                 .map(Relation::getUrl)
                 .map(Url::getResource)
@@ -63,7 +63,7 @@ public class MusicBrainzService {
         return parts[parts.length-1];
     }
 
-    private Optional<Relation> getRelationByTypeForArtist(Artist artist, String relationType) {
+    private Optional<Relation> getRelationByTypeForArtist(MusicBrainzArtist artist, String relationType) {
         List<Relation> relations = artist.getRelations();
 
         return relations

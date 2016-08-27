@@ -34,7 +34,7 @@ public class ArtistServiceFacadeImpl implements ArtistServiceFacade {
         try {
             return artistRepository.getByMBID(mbid);
         } catch (Throwable e) {
-            throw new RemoteException("Artist with MBID " + mbid.toString() + " not found.");
+            throw new RemoteException("MusicBrainzArtist with MBID " + mbid.toString() + " not found.");
         }
     }
 }

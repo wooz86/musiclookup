@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class ArtistRepositoryImpl implements ArtistRepository {
@@ -22,7 +23,7 @@ public class ArtistRepositoryImpl implements ArtistRepository {
 
     @Override
     @Cacheable(value="artists")
-    public Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException {
+    public Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException, ExecutionException, InterruptedException {
         return artistRemoteService.getByMBID(mbid);
     }
 }

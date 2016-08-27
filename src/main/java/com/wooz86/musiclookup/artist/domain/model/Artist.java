@@ -37,13 +37,7 @@ public class Artist {
         return albums;
     }
 
-    public void addAlbum(Album albumToAdd) {
-        for(Album album : this.albums) {
-            if (album.equals(albumToAdd)) {
-                return;
-            }
-        }
-
-        this.albums.add(albumToAdd);
+    public void setAlbums(List<Album> albums) {
+        this.albums = albums;
     }
 }
