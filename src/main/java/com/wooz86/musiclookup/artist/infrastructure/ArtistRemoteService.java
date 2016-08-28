@@ -3,18 +3,17 @@ package com.wooz86.musiclookup.artist.infrastructure;
 import com.wooz86.musiclookup.artist.domain.model.Album;
 import com.wooz86.musiclookup.artist.domain.model.Artist;
 import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.CoverArtArchiveApi;
-import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.CoverArtArchiveException;
+import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.CoverArtArchiveApiException;
 import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApi;
 import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApiException;
 import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiPage;
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzApi;
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzException;
+import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzApiException;
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.MusicBrainzArtist;
 import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.ReleaseGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +46,7 @@ class ArtistRemoteService {
         this.coverArtArchiveService = coverArtArchiveService;
     }
 
-    public Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException, ExecutionException, InterruptedException {
+    public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
         return getArtistByMBIDAsync(mbid);
 
 //        MusicBrainzArtist musicBrainzArtist = musicBrainzApi.getByMBId(mbid);
@@ -62,19 +61,45 @@ class ArtistRemoteService {
 ////            });
     }
 
-    @Async
-    private Artist getArtistByMBIDAsync(UUID mbid) throws MusicBrainzException, MediaWikiApiException, InterruptedException, ExecutionException {
-
-        MusicBrainzArtist musicBrainzArtist = musicBrainzApi.getByMBId(mbid);
-        String pageTitle = musicBrainzApi.getMediaWikiPageTitle(musicBrainzArtist);
-
-        String description = getDescription(pageTitle).get(); // @todo Fix this blocking call
-        List<Album> albums = getAlbums(musicBrainzArtist, mbid);
+    private Artist getArtistByMBIDAsync(UUID mbid) throws ArtistRemoteServiceException {
+        MusicBrainzArtist musicBrainzArtist = getArtistFromMusicBrainz(mbid);
+        String description = getArtistDescription(musicBrainzArtist);
+        List<Album> albums = getAlbums(musicBrainzArtist);
 
         return new Artist(mbid, description, albums);
     }
 
-    private CompletableFuture<String> getDescription(String pageTitle) throws MediaWikiApiException {
+    private MusicBrainzArtist getArtistFromMusicBrainz(UUID mbid) throws ArtistRemoteServiceException {
+        MusicBrainzArtist musicBrainzArtist = null;
+        try {
+            return musicBrainzApi.getByMBId(mbid);
+        } catch (MusicBrainzApiException e) {
+            throw new ArtistRemoteServiceException("Failed not load artist.", e);
+        }
+    }
+
+    private String getArtistDescription(MusicBrainzArtist musicBrainzArtist) {
+        String wikipediaPageUrl = musicBrainzArtist.getWikipediaPageUrl();
+
+        try {
+            String pageTitle = getPageTitleFromUrl(wikipediaPageUrl);
+            return getDescription(pageTitle).get();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getPageTitleFromUrl(String url) throws Exception { // @todo Cleanup
+        String[] parts = url.split("/");
+
+        if (parts.length == 0) {
+            throw new Exception("Could not parse page title from URL."); // @todo Move this code?
+        }
+
+        return parts[parts.length-1];
+    }
+
+    private CompletableFuture<String> getDescription(String pageTitle) {
         return CompletableFuture.supplyAsync(() -> {
             MediaWikiPage mediaWikiPage = null;
             try {
@@ -86,7 +111,7 @@ class ArtistRemoteService {
         });
     }
 
-    private List<Album> getAlbums(MusicBrainzArtist musicBrainzArtist, UUID mbid) throws ExecutionException, InterruptedException, MediaWikiApiException, MusicBrainzException {
+    private List<Album> getAlbums(MusicBrainzArtist musicBrainzArtist) throws ArtistRemoteServiceException {
         List<ReleaseGroup> musicBrainzAlbums = getMusicBrainzAlbums(musicBrainzArtist);
 
         List<CompletableFuture<Album>> collect = musicBrainzAlbums.stream()
@@ -95,9 +120,11 @@ class ArtistRemoteService {
 
         CompletableFuture<List<Album>> sequence = sequence(collect);
 
-        List<Album> alba = sequence.get();
-
-        return alba;
+        try {
+            return sequence.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new ArtistRemoteServiceException("Failed to load albums.", e);
+        }
     }
 
     private List<ReleaseGroup> getMusicBrainzAlbums(MusicBrainzArtist musicBrainzArtist) {
@@ -118,7 +145,7 @@ class ArtistRemoteService {
     private String getCoverImageUrl(ReleaseGroup album) {
         try {
             return coverArtArchiveService.getImageUrlByMBID(album.getId());
-        } catch (CoverArtArchiveException e) {
+        } catch (CoverArtArchiveApiException e) {
             return null;
         }
     }

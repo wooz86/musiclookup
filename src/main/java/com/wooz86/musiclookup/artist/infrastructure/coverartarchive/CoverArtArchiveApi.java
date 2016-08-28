@@ -25,7 +25,7 @@ public class CoverArtArchiveApi {
         this.restClient = restClient;
     }
 
-    public String getImageUrlByMBID(UUID mbid) throws CoverArtArchiveException {
+    public String getImageUrlByMBID(UUID mbid) throws CoverArtArchiveApiException {
         String requestUrl = buildRequestUrl(mbid);
 
         Response response = makeRequest(requestUrl, mbid);
@@ -38,11 +38,11 @@ public class CoverArtArchiveApi {
         return imageUrl;
     }
 
-    private Response makeRequest(String requestUrl, UUID mbid) throws CoverArtArchiveException {
+    private Response makeRequest(String requestUrl, UUID mbid) throws CoverArtArchiveApiException {
         try {
             return restClient.getForObject(requestUrl, Response.class);
         } catch (Exception e) {
-            throw new CoverArtArchiveException("Could not find cover art for for album with MBID" + mbid.toString());
+            throw new CoverArtArchiveApiException("Could not find cover art for for album with MBID" + mbid.toString());
         }
     }
 

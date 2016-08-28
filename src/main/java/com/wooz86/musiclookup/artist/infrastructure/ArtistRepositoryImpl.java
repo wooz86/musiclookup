@@ -2,14 +2,11 @@ package com.wooz86.musiclookup.artist.infrastructure;
 
 import com.wooz86.musiclookup.artist.domain.model.Artist;
 import com.wooz86.musiclookup.artist.domain.model.ArtistRepository;
-import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApiException;
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 @Component
 public class ArtistRepositoryImpl implements ArtistRepository {
@@ -23,7 +20,7 @@ public class ArtistRepositoryImpl implements ArtistRepository {
 
     @Override
     @Cacheable(value="artists")
-    public Artist getByMBID(UUID mbid) throws MediaWikiApiException, MusicBrainzException, ExecutionException, InterruptedException {
+    public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
         return artistRemoteService.getByMBID(mbid);
     }
 }
