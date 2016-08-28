@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class CoverArtArchiveService {
+public class CoverArtArchiveApi {
 
-    private static final Logger log = LoggerFactory.getLogger(CoverArtArchiveService.class);
+    private static final Logger log = LoggerFactory.getLogger(CoverArtArchiveApi.class);
 
     private RestOperations restClient;
     private String baseUrl = "http://coverartarchive.org/";
     private String endpoint = "release-group/";
 
     @Autowired
-    public CoverArtArchiveService(RestOperations restClient) {
+    public CoverArtArchiveApi(RestOperations restClient) {
         this.restClient = restClient;
     }
 

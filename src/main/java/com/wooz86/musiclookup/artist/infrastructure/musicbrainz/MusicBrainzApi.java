@@ -14,9 +14,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class MusicBrainzService {
+public class MusicBrainzApi {
 
-    private static final Logger log = LoggerFactory.getLogger(MusicBrainzService.class);
+    private static final Logger log = LoggerFactory.getLogger(MusicBrainzApi.class);
 
     private RestOperations restClient;
     private final String baseUrl = "http://musicbrainz.org/ws/2";
@@ -24,7 +24,7 @@ public class MusicBrainzService {
     private final String queryString = "?inc=url-rels+release-groups&fmt=json";
 
     @Autowired
-    public MusicBrainzService(RestOperations restClient) {
+    public MusicBrainzApi(RestOperations restClient) {
         this.restClient = restClient;
     }
 
@@ -43,7 +43,7 @@ public class MusicBrainzService {
         }
     }
 
-    public String getWikipediaPageTitleForArtist(MusicBrainzArtist artist) throws MusicBrainzException {
+    public String getMediaWikiPageTitle(MusicBrainzArtist artist) throws MusicBrainzException {
         String url = getRelationByTypeForArtist(artist, "wikipedia")
                 .map(Relation::getUrl)
                 .map(Url::getResource)

@@ -16,8 +16,6 @@ public class ReleaseGroup implements Serializable {
 
     private String title;
 
-    private String image;
-
     public UUID getId() {
         return id;
     }
