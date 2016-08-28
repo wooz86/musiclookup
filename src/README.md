@@ -9,7 +9,10 @@ Cover Art Archive.
 
 # TODO
 * Tests
-* Cache results
+* Improve: Asyncronous requests
+* Cache: Check annotations
 * Domain model?
 * Configuration and settings file for dev / production
 * Beans
+* Repository: Exception or return null
+* Controller Exception handling.
