@@ -1,4 +1,4 @@
-package com.wooz86.musiclookup.artist.infrastructure.mediawiki;
+package com.wooz86.musiclookup.mediawiki;
 
 public class MediaWikiPage {
     private final String id;

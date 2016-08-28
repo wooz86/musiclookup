@@ -1,9 +1,10 @@
 package com.wooz86.musiclookup.artist.interfaces.facade.dto;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-public class ArtistDTO {
+public class ArtistDTO implements Serializable {
 
     private UUID mbid;
     private String description;

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ArtistDTOAssembler {
 
-    public ArtistDTO toDTO(Artist artist) {
+    public ArtistDTO toDTO(final Artist artist) {
         List<AlbumDTO> albumDTOs = AlbumDTOAssembler.toDTOList(artist.getAlbums());
 
         return new ArtistDTO(artist.getId(), artist.getDescription(), albumDTOs);

@@ -1,8 +1,9 @@
 package com.wooz86.musiclookup.artist.interfaces.facade.dto;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class AlbumDTO {
+public class AlbumDTO implements Serializable {
     private UUID id;
     private String title;
     private String image;

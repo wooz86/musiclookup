@@ -1,7 +1,9 @@
-package com.wooz86.musiclookup.artist.infrastructure.coverartarchive;
+package com.wooz86.musiclookup.coverartarchive.impl;
 
-import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.dto.Image;
-import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.dto.Response;
+import com.wooz86.musiclookup.coverartarchive.CoverArtArchiveApi;
+import com.wooz86.musiclookup.coverartarchive.CoverArtArchiveApiException;
+import com.wooz86.musiclookup.coverartarchive.impl.dto.Image;
+import com.wooz86.musiclookup.coverartarchive.impl.dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +14,17 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class CoverArtArchiveApi {
+public class CoverArtArchiveApiImpl implements CoverArtArchiveApi {
 
-    private static final Logger log = LoggerFactory.getLogger(CoverArtArchiveApi.class);
+    private static final Logger log = LoggerFactory.getLogger(CoverArtArchiveApiImpl.class);
 
     private RestOperations restClient;
-    private String baseUrl = "http://coverartarchive.org/";
-    private String endpoint = "release-group/";
+    private CoverArtArchiveApiConfiguration configuration;
 
     @Autowired
-    public CoverArtArchiveApi(RestOperations restClient) {
+    public CoverArtArchiveApiImpl(RestOperations restClient, CoverArtArchiveApiConfiguration configuration) {
         this.restClient = restClient;
+        this.configuration = configuration;
     }
 
     public String getImageUrlByMBID(UUID mbid) throws CoverArtArchiveApiException {
@@ -47,6 +49,6 @@ public class CoverArtArchiveApi {
     }
 
     private String buildRequestUrl(UUID mbid) {
-        return baseUrl + endpoint + mbid.toString();
+        return configuration.getBaseUrl() + configuration.getEndpoint() + mbid.toString();
     }
 }

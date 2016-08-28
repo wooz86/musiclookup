@@ -1,16 +1,18 @@
-package com.wooz86.musiclookup.artist.infrastructure;
+package com.wooz86.musiclookup.artist.infrastructure.artistservice;
 
 import com.wooz86.musiclookup.artist.domain.model.Album;
 import com.wooz86.musiclookup.artist.domain.model.Artist;
-import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.CoverArtArchiveApi;
-import com.wooz86.musiclookup.artist.infrastructure.coverartarchive.CoverArtArchiveApiException;
-import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApi;
-import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiApiException;
-import com.wooz86.musiclookup.artist.infrastructure.mediawiki.MediaWikiPage;
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzApi;
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.MusicBrainzApiException;
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.MusicBrainzArtist;
-import com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto.ReleaseGroup;
+import com.wooz86.musiclookup.coverartarchive.impl.CoverArtArchiveApiImpl;
+import com.wooz86.musiclookup.coverartarchive.CoverArtArchiveApiException;
+import com.wooz86.musiclookup.mediawiki.MediaWikiApi;
+import com.wooz86.musiclookup.mediawiki.MediaWikiApiException;
+import com.wooz86.musiclookup.mediawiki.MediaWikiPage;
+import com.wooz86.musiclookup.mediawiki.impl.MediaWikiApiImpl;
+import com.wooz86.musiclookup.musicbrainz.MusicBrainzAlbum;
+import com.wooz86.musiclookup.musicbrainz.MusicBrainzApi;
+import com.wooz86.musiclookup.musicbrainz.MusicBrainzApiException;
+import com.wooz86.musiclookup.musicbrainz.MusicBrainzArtist;
+import com.wooz86.musiclookup.musicbrainz.impl.MusicBrainzApiImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +27,20 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
-class ArtistRemoteService {
+public class ArtistRemoteService {
 
     private static final Logger log = LoggerFactory.getLogger(ArtistRemoteService.class);
 
     private ExecutorService executorService;
     private MusicBrainzApi musicBrainzApi;
     private MediaWikiApi wikipediaService;
-    private CoverArtArchiveApi coverArtArchiveService;
+    private CoverArtArchiveApiImpl coverArtArchiveService;
 
     @Autowired
     public ArtistRemoteService(
-            MusicBrainzApi musicBrainzService,
-            MediaWikiApi wikipediaService,
-            CoverArtArchiveApi coverArtArchiveService
+            MusicBrainzApiImpl musicBrainzService,
+            MediaWikiApiImpl wikipediaService,
+            CoverArtArchiveApiImpl coverArtArchiveService
     ) {
         this.executorService = Executors.newWorkStealingPool(); // @todo Dependency inject this
         this.musicBrainzApi = musicBrainzService;
@@ -49,11 +51,11 @@ class ArtistRemoteService {
     public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
         return getArtistByMBIDAsync(mbid);
 
-//        MusicBrainzArtist musicBrainzArtist = musicBrainzApi.getByMBId(mbid);
+//        MusicBrainzArtist musicBrainzArtist = musicBrainzApi.getArtistByMBID(mbid);
 //        String pageTitle = musicBrainzApi.getMediaWikiPageTitle(musicBrainzArtist);
 //
 //        CompletableFuture<String> description = getDescription(musicBrainzArtist);
-////        CompletableFuture<List<Album>> albums = getAlbums(musicBrainzArtist);
+////        CompletableFuture<List<Album>> albums = getReleaseGroups(musicBrainzArtist);
 //
 //        // return getArtistByMBID(mbid)
 ////            .thenCombine(description, (String description, List<Album> albums) -> {
@@ -70,9 +72,8 @@ class ArtistRemoteService {
     }
 
     private MusicBrainzArtist getArtistFromMusicBrainz(UUID mbid) throws ArtistRemoteServiceException {
-        MusicBrainzArtist musicBrainzArtist = null;
         try {
-            return musicBrainzApi.getByMBId(mbid);
+            return musicBrainzApi.getArtistByMBID(mbid);
         } catch (MusicBrainzApiException e) {
             throw new ArtistRemoteServiceException("Failed not load artist.", e);
         }
@@ -112,7 +113,7 @@ class ArtistRemoteService {
     }
 
     private List<Album> getAlbums(MusicBrainzArtist musicBrainzArtist) throws ArtistRemoteServiceException {
-        List<ReleaseGroup> musicBrainzAlbums = getMusicBrainzAlbums(musicBrainzArtist);
+        List<MusicBrainzAlbum> musicBrainzAlbums = musicBrainzArtist.getAlbums();
 
         List<CompletableFuture<Album>> collect = musicBrainzAlbums.stream()
                 .map(this::buildAlbum)
@@ -127,14 +128,7 @@ class ArtistRemoteService {
         }
     }
 
-    private List<ReleaseGroup> getMusicBrainzAlbums(MusicBrainzArtist musicBrainzArtist) {
-        return musicBrainzArtist.getReleaseGroups()
-                .stream()
-                .filter(p -> p.getPrimaryType().equals("Album"))
-                .collect(Collectors.toList());
-    }
-
-    private CompletableFuture<Album> buildAlbum(ReleaseGroup album) {
+    private CompletableFuture<Album> buildAlbum(MusicBrainzAlbum album) {
         return CompletableFuture.supplyAsync(() -> {
             String albumCoverUrl = getCoverImageUrl(album);
             log.info("Thread " + Thread.currentThread().getId() + ": " + albumCoverUrl); //@todo Remove debug code
@@ -142,7 +136,7 @@ class ArtistRemoteService {
         }, executorService);
     }
 
-    private String getCoverImageUrl(ReleaseGroup album) {
+    private String getCoverImageUrl(MusicBrainzAlbum album) {
         try {
             return coverArtArchiveService.getImageUrlByMBID(album.getId());
         } catch (CoverArtArchiveApiException e) {

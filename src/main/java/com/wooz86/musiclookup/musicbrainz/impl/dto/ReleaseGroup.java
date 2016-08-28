@@ -1,4 +1,4 @@
-package com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto;
+package com.wooz86.musiclookup.musicbrainz.impl.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,9 +43,9 @@ public class ReleaseGroup implements Serializable {
     @Override
     public String toString() {
         return "ReleaseGroup{" +
-                "primaryType=" + primaryType +
+                "id=" + id +
+                ", primaryType=" + primaryType +
                 ", title=" + title +
-                ", id=" + id +
                 '}';
     }
 }

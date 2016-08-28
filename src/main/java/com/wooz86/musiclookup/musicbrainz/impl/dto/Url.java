@@ -1,4 +1,4 @@
-package com.wooz86.musiclookup.artist.infrastructure.musicbrainz.dto;
+package com.wooz86.musiclookup.musicbrainz.impl.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

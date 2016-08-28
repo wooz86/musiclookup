@@ -1,12 +1,14 @@
-package com.wooz86.musiclookup.artist.infrastructure.mediawiki;
+package com.wooz86.musiclookup.musicbrainz.impl;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "mediawiki")
-class Configuration {
+@ConfigurationProperties(prefix = "musicbrainz")
+class MusicBrainzApiConfiguration {
+
     private String baseUrl;
+    private String endpoint;
     private String queryString;
 
     public String getBaseUrl() {
@@ -17,6 +19,14 @@ class Configuration {
         this.baseUrl = baseUrl;
     }
 
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
     public String getQueryString() {
         return queryString;
     }
@@ -25,3 +35,4 @@ class Configuration {
         this.queryString = queryString;
     }
 }
+

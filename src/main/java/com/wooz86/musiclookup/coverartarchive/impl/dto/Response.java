@@ -1,25 +1,27 @@
-package com.wooz86.musiclookup.artist.infrastructure.mediawiki.dto;
+package com.wooz86.musiclookup.coverartarchive.impl.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Response implements Serializable {
-    private Query query;
 
-    public Query getQuery() {
-        return query;
+    private List<Image> images;
+
+    public List<Image> getImages() {
+        return images;
     }
 
-    public void setQuery(Query query) {
-        this.query = query;
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     @Override
     public String toString() {
         return "Response{" +
-                "query=" + query +
+                "images='" + images + '\'' +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.wooz86.musiclookup.artist.infrastructure.mediawiki.dto;
+package com.wooz86.musiclookup.mediawiki.impl.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -8,12 +8,12 @@ import java.io.Serializable;
 public class Page implements Serializable {
     private String extract;
 
-    public String getExtract() {
-        return extract;
-    }
-
     public void setExtract(String extract) {
         this.extract = extract;
+    }
+
+    public String getExtract() {
+        return extract;
     }
 
     @Override

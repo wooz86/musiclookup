@@ -1,4 +1,4 @@
-package com.wooz86.musiclookup.artist.infrastructure.musicbrainz;
+package com.wooz86.musiclookup.musicbrainz;
 
 public class MusicBrainzApiException extends Throwable {
 

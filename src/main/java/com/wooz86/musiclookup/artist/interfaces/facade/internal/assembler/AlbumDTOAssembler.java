@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AlbumDTOAssembler {
 
-    public static List<AlbumDTO> toDTOList(List<Album> albums) {
+    public static List<AlbumDTO> toDTOList(final List<Album> albums) {
         List<AlbumDTO> dtoList = new ArrayList<>();
 
         for(Album album : albums) {

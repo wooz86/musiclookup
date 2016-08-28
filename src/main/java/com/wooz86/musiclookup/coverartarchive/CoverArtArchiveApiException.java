@@ -1,4 +1,4 @@
-package com.wooz86.musiclookup.artist.infrastructure.coverartarchive;
+package com.wooz86.musiclookup.coverartarchive;
 
 public class CoverArtArchiveApiException extends Throwable {
 

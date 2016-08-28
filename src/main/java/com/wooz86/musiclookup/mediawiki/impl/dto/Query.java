@@ -1,8 +1,11 @@
-package com.wooz86.musiclookup.artist.infrastructure.mediawiki.dto;
+package com.wooz86.musiclookup.mediawiki.impl.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Query implements Serializable {
     private Map<String, Page> pages;
 

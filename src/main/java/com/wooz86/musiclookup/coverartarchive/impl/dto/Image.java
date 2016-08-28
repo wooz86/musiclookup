@@ -1,4 +1,4 @@
-package com.wooz86.musiclookup.artist.infrastructure.coverartarchive.dto;
+package com.wooz86.musiclookup.coverartarchive.impl.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

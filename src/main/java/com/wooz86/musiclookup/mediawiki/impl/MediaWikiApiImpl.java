@@ -1,8 +1,9 @@
-package com.wooz86.musiclookup.artist.infrastructure.mediawiki;
+package com.wooz86.musiclookup.mediawiki.impl;
 
-import com.wooz86.musiclookup.artist.infrastructure.mediawiki.dto.Page;
-import com.wooz86.musiclookup.artist.infrastructure.mediawiki.dto.Query;
-import com.wooz86.musiclookup.artist.infrastructure.mediawiki.dto.Response;
+import com.wooz86.musiclookup.mediawiki.*;
+import com.wooz86.musiclookup.mediawiki.impl.dto.Page;
+import com.wooz86.musiclookup.mediawiki.impl.dto.Query;
+import com.wooz86.musiclookup.mediawiki.impl.dto.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +14,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @Service
-public class MediaWikiApi {
-    private static final Logger log = LoggerFactory.getLogger(MediaWikiApi.class);
+public class MediaWikiApiImpl implements MediaWikiApi {
+    private static final Logger log = LoggerFactory.getLogger(MediaWikiApiImpl.class);
 
     private final RestOperations restClient;
-    private final Configuration configuration;
+    private final MediaWikiApiConfiguration configuration;
 
     @Autowired
-    public MediaWikiApi(RestOperations restClient, Configuration configuration) {
+    public MediaWikiApiImpl(RestOperations restClient, MediaWikiApiConfiguration configuration) {
         this.restClient = restClient;
         this.configuration = configuration;
     }
