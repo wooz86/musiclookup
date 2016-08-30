@@ -1,18 +1,16 @@
 package com.wooz86.musiclookup.artist.infrastructure.artistservice;
 
+import com.wooz86.coverartarchive.CoverArtArchiveApi;
+import com.wooz86.coverartarchive.CoverArtArchiveApiException;
+import com.wooz86.mediawiki.MediaWikiApi;
+import com.wooz86.mediawiki.MediaWikiApiException;
+import com.wooz86.mediawiki.MediaWikiPage;
+import com.wooz86.musicbrainz.MusicBrainzAlbum;
+import com.wooz86.musicbrainz.MusicBrainzApi;
+import com.wooz86.musicbrainz.MusicBrainzApiException;
+import com.wooz86.musicbrainz.MusicBrainzArtist;
 import com.wooz86.musiclookup.artist.domain.model.Album;
 import com.wooz86.musiclookup.artist.domain.model.Artist;
-import com.wooz86.musiclookup.coverartarchive.impl.CoverArtArchiveApiImpl;
-import com.wooz86.musiclookup.coverartarchive.CoverArtArchiveApiException;
-import com.wooz86.musiclookup.mediawiki.MediaWikiApi;
-import com.wooz86.musiclookup.mediawiki.MediaWikiApiException;
-import com.wooz86.musiclookup.mediawiki.MediaWikiPage;
-import com.wooz86.musiclookup.mediawiki.impl.MediaWikiApiImpl;
-import com.wooz86.musiclookup.musicbrainz.MusicBrainzAlbum;
-import com.wooz86.musiclookup.musicbrainz.MusicBrainzApi;
-import com.wooz86.musiclookup.musicbrainz.MusicBrainzApiException;
-import com.wooz86.musiclookup.musicbrainz.MusicBrainzArtist;
-import com.wooz86.musiclookup.musicbrainz.impl.MusicBrainzApiImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,98 +30,87 @@ public class ArtistRemoteService {
 
     private ExecutorService executorService;
     private MusicBrainzApi musicBrainzApi;
-    private MediaWikiApi wikipediaService;
-    private CoverArtArchiveApiImpl coverArtArchiveService;
+    private MediaWikiApi mediaWikiApi;
+    private CoverArtArchiveApi coverArtArchiveApi;
 
     @Autowired
     public ArtistRemoteService(
-            MusicBrainzApiImpl musicBrainzService,
-            MediaWikiApiImpl wikipediaService,
-            CoverArtArchiveApiImpl coverArtArchiveService
+            ExecutorService executorService,
+            MusicBrainzApi musicBrainzService,
+            MediaWikiApi wikipediaService,
+            CoverArtArchiveApi coverArtArchiveService
     ) {
-        this.executorService = Executors.newWorkStealingPool(); // @todo Dependency inject this
+        this.executorService = executorService;
         this.musicBrainzApi = musicBrainzService;
-        this.wikipediaService = wikipediaService;
-        this.coverArtArchiveService = coverArtArchiveService;
+        this.mediaWikiApi = wikipediaService;
+        this.coverArtArchiveApi = coverArtArchiveService;
     }
 
     public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
-        return getArtistByMBIDAsync(mbid);
-
-//        MusicBrainzArtist musicBrainzArtist = musicBrainzApi.getArtistByMBID(mbid);
-//        String pageTitle = musicBrainzApi.getMediaWikiPageTitle(musicBrainzArtist);
-//
-//        CompletableFuture<String> description = getDescription(musicBrainzArtist);
-////        CompletableFuture<List<Album>> albums = getReleaseGroups(musicBrainzArtist);
-//
-//        // return getArtistByMBID(mbid)
-////            .thenCombine(description, (String description, List<Album> albums) -> {
-//
-////            });
-    }
-
-    private Artist getArtistByMBIDAsync(UUID mbid) throws ArtistRemoteServiceException {
-        MusicBrainzArtist musicBrainzArtist = getArtistFromMusicBrainz(mbid);
-        String description = getArtistDescription(musicBrainzArtist);
+        MusicBrainzArtist musicBrainzArtist = getArtistFromMusicBrainzApi(mbid);
         List<Album> albums = getAlbums(musicBrainzArtist);
+        String description = getArtistDescription(musicBrainzArtist);
 
         return new Artist(mbid, description, albums);
     }
 
-    private MusicBrainzArtist getArtistFromMusicBrainz(UUID mbid) throws ArtistRemoteServiceException {
+    private MusicBrainzArtist getArtistFromMusicBrainzApi(UUID mbid) throws ArtistRemoteServiceException {
         try {
             return musicBrainzApi.getArtistByMBID(mbid);
         } catch (MusicBrainzApiException e) {
-            throw new ArtistRemoteServiceException("Failed not load artist.", e);
+            log.info("Failed to load artist from MusicBrainz API.", e);
+            throw new ArtistRemoteServiceException("Failed to load artist.", e);
         }
     }
 
     private String getArtistDescription(MusicBrainzArtist musicBrainzArtist) {
-        String wikipediaPageUrl = musicBrainzArtist.getWikipediaPageUrl();
+        String description = null;
 
-        try {
-            String pageTitle = getPageTitleFromUrl(wikipediaPageUrl);
-            return getDescription(pageTitle).get();
-        } catch (Exception e) {
-            return null;
+        String wikipediaPageUrl = musicBrainzArtist.getWikipediaPageUrl();
+        String pageTitle = getPageTitleFromUrl(wikipediaPageUrl);
+
+        if (pageTitle != null) {
+            description = getDescriptionFromMediaWikiApi(pageTitle);
         }
+
+        return description;
     }
 
-    private String getPageTitleFromUrl(String url) throws Exception { // @todo Cleanup
+    private String getPageTitleFromUrl(String url) {
+        String pageTitle = null;
+
         String[] parts = url.split("/");
 
-        if (parts.length == 0) {
-            throw new Exception("Could not parse page title from URL."); // @todo Move this code?
+        if (parts.length != 0) {
+            pageTitle = parts[parts.length - 1];
         }
 
-        return parts[parts.length-1];
+        return pageTitle;
     }
 
-    private CompletableFuture<String> getDescription(String pageTitle) {
-        return CompletableFuture.supplyAsync(() -> {
-            MediaWikiPage mediaWikiPage = null;
-            try {
-                mediaWikiPage = wikipediaService.getPageByTitle(pageTitle);
-                return mediaWikiPage.getExtract();
-            } catch (MediaWikiApiException e) {
-                return null;
-            }
-        });
+    private String getDescriptionFromMediaWikiApi(String pageTitle) {
+        try {
+            MediaWikiPage mediaWikiPage = mediaWikiApi.getPageByTitle(pageTitle);
+            return mediaWikiPage.getExtract();
+        } catch (MediaWikiApiException e) {
+            log.info("Failed to load artist description from MediaWiki API.");
+            return null;
+        }
     }
 
     private List<Album> getAlbums(MusicBrainzArtist musicBrainzArtist) throws ArtistRemoteServiceException {
         List<MusicBrainzAlbum> musicBrainzAlbums = musicBrainzArtist.getAlbums();
 
-        List<CompletableFuture<Album>> collect = musicBrainzAlbums.stream()
+        List<CompletableFuture<Album>> futures = musicBrainzAlbums.stream()
                 .map(this::buildAlbum)
                 .collect(Collectors.toList());
 
-        CompletableFuture<List<Album>> sequence = sequence(collect);
+        CompletableFuture<List<Album>> albumsFuture = mergeCompletableFutures(futures);
 
         try {
-            return sequence.get();
+            return albumsFuture.get();
         } catch (InterruptedException | ExecutionException e) {
-            throw new ArtistRemoteServiceException("Failed to load albums.", e);
+            throw new ArtistRemoteServiceException("Failed to load albums for artist.", e);
         }
     }
 
@@ -138,13 +124,13 @@ public class ArtistRemoteService {
 
     private String getCoverImageUrl(MusicBrainzAlbum album) {
         try {
-            return coverArtArchiveService.getImageUrlByMBID(album.getId());
+            return coverArtArchiveApi.getImageUrlByMBID(album.getId());
         } catch (CoverArtArchiveApiException e) {
             return null;
         }
     }
 
-    private static <T> CompletableFuture<List<T>> sequence(List<CompletableFuture<T>> futures) {
+    private static <T> CompletableFuture<List<T>> mergeCompletableFutures(List<CompletableFuture<T>> futures) {
         CompletableFuture<Void> allDoneFuture =
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
 

@@ -14,7 +14,6 @@ public class ArtistDTO implements Serializable {
     }
 
     public ArtistDTO(UUID mbid, String description, List<AlbumDTO> albums) {
-
         this.mbid = mbid;
         this.description = description;
         this.albums = albums;

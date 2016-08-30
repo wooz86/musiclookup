@@ -4,4 +4,5 @@ import java.util.UUID;
 
 public interface ArtistRepository {
     Artist getByMBID(UUID mbid);
+    ArtistId getNextArtistId();
 }

@@ -24,6 +24,11 @@ public class ArtistServiceFacadeImpl implements ArtistServiceFacade {
     @Override
     public ArtistDTO getArtistByMBID(UUID mbid) throws RemoteException {
         Artist artist = getArtist(mbid);
+
+        if (artist == null) {
+            return null;
+        }
+
         ArtistDTOAssembler artistDTOAssembler = new ArtistDTOAssembler();
 
         return artistDTOAssembler.toDTO(artist);
