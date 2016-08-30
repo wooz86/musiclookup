@@ -6,17 +6,19 @@ The application merges information from MusicBrainz, Wikipedia and
 Cover Art Archive. The application is based on [Spring Boot](http://projects.spring.io/spring-boot/).
 
 ## Project Structure
-The project is located in `src/main/java/com/wooz86/musiclookup`.
+
+There are 3 packages located outside of the project root, in `src/main/java/com/wooz86/`, these are supposed to be able to be reused in the future, these are:
+* `coverartarchive` - Contains the interface and an implementation of that interface for the [Cover Art Archive API](https://musicbrainz.org/doc/Cover_Art_Archive/API). 
+* `mediawiki` - Contains the interface and an implementation of that interface for the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page). 
+* `musicbrainz` - Contains the interface and an implementation of that interface for the [MusicBrainz API](https://musicbrainz.org/doc/Development/JSON_Web_Service).
 This package is the base for the application, where you can find the entrypoint for the application (MusiclookupApplication.java)
 Inside there are 4 packages:
-
-* **artist** - This is the "bounded context" of the application. It has been developed using a DDD mindset. It contains the layers usually found in a DDD-Application:
-    * **domain** - Contains the domain models, domain services and repository interfaces among other things.
-    * **infrastructure** - Contains code which is of infrastructural type and does not belong in the domain layer. Examples of such code is the implementation of `ArtistRepository` and the `ArtistService`
-    * **interfaces** - This is the part of the application which houses the REST-API but could have other 
-* **coverartarchive** - Contains the interface and an implementation of that interface for the [Cover Art Archive API](https://musicbrainz.org/doc/Cover_Art_Archive/API). 
-* **mediawiki** - Contains the interface and an implementation of that interface for the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page). 
-* **musicbrainz** - Contains the interface and an implementation of that interface for the [MusicBrainz API](https://musicbrainz.org/doc/Development/JSON_Web_Service).
+-
+The project root is located in `src/main/java/com/wooz86/musiclookup/`.
+* `artist` - This is the "bounded context" of the application. It has been developed using a DDD mindset. It contains the layers usually found in a DDD-Application:
+    * `domain` - Contains the domain models, domain services and repository interfaces among other things.
+    * `infrastructure` - Contains code which is of infrastructural type and does not belong in the domain layer. Examples of such code is the implementation of `ArtistRepository` and the `ArtistService`
+    * `interfaces` - This is the part of the application which houses the REST-API but could have other 
  
 ## Cache
 The application uses Spring Context to cache results. The caching is being done in the implementation of ArtistRepository found in `src/main/java/com/wooz86/musiclookup/artist/infrastructure/ArtistRepositoryImpl.java`.
