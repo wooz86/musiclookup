@@ -117,7 +117,6 @@ public class ArtistRemoteService {
     private CompletableFuture<Album> buildAlbum(MusicBrainzAlbum album) {
         return CompletableFuture.supplyAsync(() -> {
             String albumCoverUrl = getCoverImageUrl(album);
-            log.info("Thread " + Thread.currentThread().getId() + ": " + albumCoverUrl); //@todo Remove debug code
             return new Album(album.getId(), album.getTitle(), albumCoverUrl);
         }, executorService);
     }
