@@ -1,0 +1,3 @@
+include 'musicbrainz'
+include 'mediawiki'
+include 'coverartarchive'

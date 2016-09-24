@@ -36,14 +36,14 @@ public class ArtistRemoteService {
     @Autowired
     public ArtistRemoteService(
             ExecutorService executorService,
-            MusicBrainzApi musicBrainzService,
-            MediaWikiApi wikipediaService,
-            CoverArtArchiveApi coverArtArchiveService
+            MusicBrainzApi musicBrainzApi,
+            MediaWikiApi mediaWikiApi,
+            CoverArtArchiveApi coverArtArchiveApi
     ) {
         this.executorService = executorService;
-        this.musicBrainzApi = musicBrainzService;
-        this.mediaWikiApi = wikipediaService;
-        this.coverArtArchiveApi = coverArtArchiveService;
+        this.musicBrainzApi = musicBrainzApi;
+        this.mediaWikiApi = mediaWikiApi;
+        this.coverArtArchiveApi = coverArtArchiveApi;
     }
 
     public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
@@ -56,7 +56,7 @@ public class ArtistRemoteService {
 
     private MusicBrainzArtist getArtistFromMusicBrainzApi(UUID mbid) throws ArtistRemoteServiceException {
         try {
-            return musicBrainzApi.getArtistByMBID(mbid);
+            return (MusicBrainzArtist) musicBrainzApi.getByMBID(mbid);
         } catch (MusicBrainzApiException e) {
             log.info("Failed to load artist from MusicBrainz API.", e);
             throw new ArtistRemoteServiceException("Failed to load artist.", e);

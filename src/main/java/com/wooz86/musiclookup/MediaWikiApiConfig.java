@@ -1,6 +1,5 @@
 package com.wooz86.musiclookup;
 
-import com.wooz86.mediawiki.MediaWikiApi;
 import com.wooz86.mediawiki.impl.MediaWikiApiConfiguration;
 import com.wooz86.mediawiki.impl.MediaWikiApiImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class MediaWikiApiConfig {
     }
 
     @Bean
-    public MediaWikiApi mediaWikiApi() {
+    public MediaWikiApiImpl mediaWikiApi() {
         MediaWikiApiConfiguration configuration = getConfiguration();
 
         return new MediaWikiApiImpl(restOperations, configuration);

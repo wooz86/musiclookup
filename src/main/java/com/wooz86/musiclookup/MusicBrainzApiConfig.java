@@ -2,12 +2,15 @@ package com.wooz86.musiclookup;
 
 import com.wooz86.musicbrainz.MusicBrainzApi;
 import com.wooz86.musicbrainz.impl.MusicBrainzApiConfiguration;
-import com.wooz86.musicbrainz.impl.MusicBrainzApiImpl;
+import com.wooz86.musicbrainz.impl.MusicBrainzArtistApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestOperations;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 @Configuration
 public class MusicBrainzApiConfig {
@@ -22,10 +25,10 @@ public class MusicBrainzApiConfig {
     }
 
     @Bean
-    public MusicBrainzApi musicBrainzApi() {
+    public MusicBrainzApi musicBrainzApi() throws GeneralSecurityException, IOException {
         MusicBrainzApiConfiguration configuration = getConfiguration();
 
-        return new MusicBrainzApiImpl(restOperations, configuration);
+        return new MusicBrainzArtistApi(configuration);
     }
 
     private MusicBrainzApiConfiguration getConfiguration() {

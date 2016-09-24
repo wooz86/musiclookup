@@ -31,11 +31,14 @@ repositories {
 
 
 dependencies {
+	compile project(':musicbrainz')
+	compile project(':mediawiki')
+	compile project(':coverartarchive')
+
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile("org.springframework:spring-context")
-	compile("com.fasterxml.jackson.core:jackson-databind")
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
