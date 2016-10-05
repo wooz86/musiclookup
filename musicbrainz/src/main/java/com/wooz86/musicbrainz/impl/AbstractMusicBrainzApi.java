@@ -13,15 +13,13 @@ import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
-abstract class AbstractMusicBrainzApi<T> {
+abstract class AbstractMusicBrainzApi {
     private final MusicBrainzApiConfiguration configuration;
     private final NetHttpTransport netHttpTransport;
-    private final JacksonFactory defaultInstance;
 
     AbstractMusicBrainzApi(MusicBrainzApiConfiguration configuration) throws GeneralSecurityException, IOException {
         this.configuration = configuration;
         this.netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        this.defaultInstance = JacksonFactory.getDefaultInstance();
     }
 
     URI buildRequestUri(UUID mbid) throws MusicBrainzApiException {
@@ -34,7 +32,7 @@ abstract class AbstractMusicBrainzApi<T> {
         }
     }
 
-    <T> T dispatchRequest(URI uri, Class<T> responseType, Object... uriVariables) throws MusicBrainzApiException {
+    <T> T dispatchRequest(URI uri, Class<T> responseType) throws MusicBrainzApiException {
         try {
             HttpRequest httpRequest = buildRequest(uri);
             HttpResponse response = httpRequest.execute();

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 @Component
@@ -23,7 +24,7 @@ public class ArtistRepositoryImpl implements ArtistRepository {
 
     @Override
     @Cacheable(value = "artists")
-    public Artist getByMBID(UUID mbid) {
+    public Artist getByMBID(UUID mbid) throws URISyntaxException {
         Artist artist = tryGetByMBID(mbid);
 
         if (artist != null && artist.getArtistId() == null) {
@@ -33,7 +34,7 @@ public class ArtistRepositoryImpl implements ArtistRepository {
         return artist;
     }
 
-    private Artist tryGetByMBID(UUID mbid) {
+    private Artist tryGetByMBID(UUID mbid) throws URISyntaxException {
         try {
             return artistRemoteService.getByMBID(mbid);
         } catch (ArtistRemoteServiceException e) {

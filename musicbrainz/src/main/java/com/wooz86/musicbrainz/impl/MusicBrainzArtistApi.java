@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class MusicBrainzArtistApi extends AbstractMusicBrainzApi<Artist> implements MusicBrainzApi<MusicBrainzArtist> {
+public class MusicBrainzArtistApi extends AbstractMusicBrainzApi implements MusicBrainzApi<MusicBrainzArtist> {
 
     public MusicBrainzArtistApi(MusicBrainzApiConfiguration configuration) throws GeneralSecurityException, IOException {
         super(configuration);

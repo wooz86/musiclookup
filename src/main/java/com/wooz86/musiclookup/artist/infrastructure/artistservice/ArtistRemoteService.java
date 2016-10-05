@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -46,7 +47,7 @@ public class ArtistRemoteService {
         this.coverArtArchiveApi = coverArtArchiveApi;
     }
 
-    public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
+    public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException, URISyntaxException {
         MusicBrainzArtist musicBrainzArtist = getArtistFromMusicBrainzApi(mbid);
         List<Album> albums = getAlbums(musicBrainzArtist);
         String description = getArtistDescription(musicBrainzArtist);
@@ -63,7 +64,7 @@ public class ArtistRemoteService {
         }
     }
 
-    private String getArtistDescription(MusicBrainzArtist musicBrainzArtist) {
+    private String getArtistDescription(MusicBrainzArtist musicBrainzArtist) throws URISyntaxException {
         String description = null;
 
         String wikipediaPageUrl = musicBrainzArtist.getWikipediaPageUrl();
@@ -88,7 +89,7 @@ public class ArtistRemoteService {
         return pageTitle;
     }
 
-    private String getDescriptionFromMediaWikiApi(String pageTitle) {
+    private String getDescriptionFromMediaWikiApi(String pageTitle) throws URISyntaxException {
         try {
             MediaWikiPage mediaWikiPage = mediaWikiApi.getPageByTitle(pageTitle);
             return mediaWikiPage.getExtract();

@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestOperations;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 @Configuration
 public class MediaWikiApiConfig {
 
@@ -21,10 +24,10 @@ public class MediaWikiApiConfig {
     }
 
     @Bean
-    public MediaWikiApiImpl mediaWikiApi() {
+    public MediaWikiApiImpl mediaWikiApi() throws GeneralSecurityException, IOException {
         MediaWikiApiConfiguration configuration = getConfiguration();
 
-        return new MediaWikiApiImpl(restOperations, configuration);
+        return new MediaWikiApiImpl(configuration);
     }
 
     private MediaWikiApiConfiguration getConfiguration() {
