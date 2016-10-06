@@ -5,5 +5,6 @@ import java.util.UUID;
 
 public interface ArtistRepository {
     Artist getByMBID(UUID mbid) throws URISyntaxException;
+
     ArtistId getNextArtistId();
 }

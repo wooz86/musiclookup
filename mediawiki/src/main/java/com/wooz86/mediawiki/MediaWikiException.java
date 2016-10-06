@@ -1,12 +1,12 @@
 package com.wooz86.mediawiki;
 
-public class MediaWikiApiException extends Throwable {
+public class MediaWikiException extends Throwable {
 
-    public MediaWikiApiException(String message) {
+    public MediaWikiException(String message) {
         super(message);
     }
 
-    public MediaWikiApiException(String message, Throwable cause) {
+    public MediaWikiException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -1,6 +1,6 @@
 package com.wooz86.coverartarchive.impl;
 
-public class CoverArtArchiveApiConfiguration {
+public class Configuration {
     private String baseUrl;
     private String endpoint;
 

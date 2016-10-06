@@ -1,12 +1,8 @@
 package com.wooz86.mediawiki.impl.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.api.client.util.Key;
 
-import java.io.Serializable;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Response implements Serializable {
+public class Response {
 
     @Key
     private Query query;

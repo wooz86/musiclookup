@@ -1,12 +1,12 @@
 package com.wooz86.coverartarchive;
 
-public class CoverArtArchiveApiException extends Throwable {
+public class CoverArtArchiveException extends Throwable {
 
-    public CoverArtArchiveApiException(String message) {
+    public CoverArtArchiveException(String message) {
         super(message);
     }
 
-    public CoverArtArchiveApiException(String message, Throwable cause) {
+    public CoverArtArchiveException(String message, Throwable cause) {
         super(message, cause);
     }
 }

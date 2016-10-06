@@ -1,45 +1,62 @@
 package com.wooz86.musicbrainz.impl;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.*;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.wooz86.musicbrainz.MusicBrainzApiException;
+import com.wooz86.musicbrainz.MusicBrainzException;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 abstract class AbstractMusicBrainzApi {
-    private final MusicBrainzApiConfiguration configuration;
-    private final NetHttpTransport netHttpTransport;
 
-    AbstractMusicBrainzApi(MusicBrainzApiConfiguration configuration) throws GeneralSecurityException, IOException {
+    private MusicBrainzApiConfiguration configuration;
+    private NetHttpTransport netHttpTransport;
+
+    AbstractMusicBrainzApi(MusicBrainzApiConfiguration configuration) throws MusicBrainzException {
         this.configuration = configuration;
-        this.netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        setTransport();
     }
 
-    URI buildRequestUri(UUID mbid) throws MusicBrainzApiException {
-        String uriString = configuration.getBaseUrl() + configuration.getEndpoint() + mbid.toString() +
-                configuration.getQueryString();
+    private void setTransport() throws MusicBrainzException {
         try {
-            return new URI(uriString);
-        } catch (URISyntaxException e) {
-            throw new MusicBrainzApiException("Invalid URL in configuration.", e);
+            // @todo Extract dependency and use DI instead
+            this.netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        } catch (Throwable e) {
+            throw new MusicBrainzException("Invalid transport.", e);
         }
     }
 
-    <T> T dispatchRequest(URI uri, Class<T> responseType) throws MusicBrainzApiException {
+    URI buildRequestUri(UUID mbid) throws MusicBrainzException {
+        String baseUrl = configuration.getBaseUrl();
+        String endpoint = configuration.getEndpoint();
+        String mbidString = mbid.toString();
+        String queryString = configuration.getQueryString();
+
+        String uriString = baseUrl + endpoint + mbidString + queryString;
+
+        try {
+            return new URI(uriString);
+        } catch (URISyntaxException e) {
+            throw new MusicBrainzException("Invalid URL in configuration.", e);
+        }
+    }
+
+    <T> T dispatchRequest(URI uri, Class<T> responseType) throws MusicBrainzException {
         try {
             HttpRequest httpRequest = buildRequest(uri);
             HttpResponse response = httpRequest.execute();
 
             return response.parseAs(responseType);
         } catch (Throwable e) {
-            throw new MusicBrainzApiException("MusicBrainz API-request failed.", e);
+            throw new MusicBrainzException("MusicBrainz API-request failed.", e);
         }
     }
 

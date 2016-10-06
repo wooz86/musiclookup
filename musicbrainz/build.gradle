@@ -1,8 +1,8 @@
 apply plugin: 'java'
 
 jar {
-	baseName = 'musicbrainz'
-	version = '0.0.1'
+    baseName = 'musicbrainz'
+    version = '0.0.1'
 }
 
 sourceCompatibility = 1.8
@@ -13,5 +13,5 @@ repositories {
 }
 
 dependencies {
-	compile group: 'com.google.api-client', name: 'google-api-client-jackson2', version: '1.22.0'
+    compile group: 'com.google.api-client', name: 'google-api-client-jackson2', version: '1.22.0'
 }

@@ -1,13 +1,13 @@
 package com.wooz86.musiclookup.artist.infrastructure.artistservice;
 
 import com.wooz86.coverartarchive.CoverArtArchiveApi;
-import com.wooz86.coverartarchive.CoverArtArchiveApiException;
+import com.wooz86.coverartarchive.CoverArtArchiveException;
 import com.wooz86.mediawiki.MediaWikiApi;
-import com.wooz86.mediawiki.MediaWikiApiException;
+import com.wooz86.mediawiki.MediaWikiException;
 import com.wooz86.mediawiki.MediaWikiPage;
 import com.wooz86.musicbrainz.MusicBrainzAlbum;
 import com.wooz86.musicbrainz.MusicBrainzApi;
-import com.wooz86.musicbrainz.MusicBrainzApiException;
+import com.wooz86.musicbrainz.MusicBrainzException;
 import com.wooz86.musicbrainz.MusicBrainzArtist;
 import com.wooz86.musiclookup.artist.domain.model.Album;
 import com.wooz86.musiclookup.artist.domain.model.Artist;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -47,7 +46,18 @@ public class ArtistRemoteService {
         this.coverArtArchiveApi = coverArtArchiveApi;
     }
 
-    public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException, URISyntaxException {
+    private static <T> CompletableFuture<List<T>> mergeCompletableFutures(List<CompletableFuture<T>> futures) {
+        CompletableFuture<Void> allDoneFuture =
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
+
+        return allDoneFuture.thenApply(results ->
+                futures.stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
         MusicBrainzArtist musicBrainzArtist = getArtistFromMusicBrainzApi(mbid);
         List<Album> albums = getAlbums(musicBrainzArtist);
         String description = getArtistDescription(musicBrainzArtist);
@@ -58,13 +68,13 @@ public class ArtistRemoteService {
     private MusicBrainzArtist getArtistFromMusicBrainzApi(UUID mbid) throws ArtistRemoteServiceException {
         try {
             return (MusicBrainzArtist) musicBrainzApi.getByMBID(mbid);
-        } catch (MusicBrainzApiException e) {
+        } catch (MusicBrainzException e) {
             log.info("Failed to load artist from MusicBrainz API.", e);
             throw new ArtistRemoteServiceException("Failed to load artist.", e);
         }
     }
 
-    private String getArtistDescription(MusicBrainzArtist musicBrainzArtist) throws URISyntaxException {
+    private String getArtistDescription(MusicBrainzArtist musicBrainzArtist) {
         String description = null;
 
         String wikipediaPageUrl = musicBrainzArtist.getWikipediaPageUrl();
@@ -89,11 +99,11 @@ public class ArtistRemoteService {
         return pageTitle;
     }
 
-    private String getDescriptionFromMediaWikiApi(String pageTitle) throws URISyntaxException {
+    private String getDescriptionFromMediaWikiApi(String pageTitle) {
         try {
             MediaWikiPage mediaWikiPage = mediaWikiApi.getPageByTitle(pageTitle);
             return mediaWikiPage.getExtract();
-        } catch (MediaWikiApiException e) {
+        } catch (MediaWikiException e) {
             log.info("Failed to load artist description from MediaWiki API.");
             return null;
         }
@@ -125,20 +135,9 @@ public class ArtistRemoteService {
     private String getCoverImageUrl(MusicBrainzAlbum album) {
         try {
             return coverArtArchiveApi.getImageUrlByMBID(album.getId());
-        } catch (CoverArtArchiveApiException e) {
+        } catch (CoverArtArchiveException e) {
             return null;
         }
-    }
-
-    private static <T> CompletableFuture<List<T>> mergeCompletableFutures(List<CompletableFuture<T>> futures) {
-        CompletableFuture<Void> allDoneFuture =
-                CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
-
-        return allDoneFuture.thenApply(results ->
-                futures.stream()
-                        .map(CompletableFuture::join)
-                        .collect(Collectors.toList())
-        );
     }
 }
 

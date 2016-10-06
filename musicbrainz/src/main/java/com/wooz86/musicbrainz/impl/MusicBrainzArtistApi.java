@@ -2,27 +2,25 @@ package com.wooz86.musicbrainz.impl;
 
 import com.wooz86.musicbrainz.MusicBrainzAlbum;
 import com.wooz86.musicbrainz.MusicBrainzApi;
-import com.wooz86.musicbrainz.MusicBrainzApiException;
 import com.wooz86.musicbrainz.MusicBrainzArtist;
+import com.wooz86.musicbrainz.MusicBrainzException;
 import com.wooz86.musicbrainz.impl.dto.Artist;
 import com.wooz86.musicbrainz.impl.dto.Relation;
 import com.wooz86.musicbrainz.impl.dto.ReleaseGroup;
 import com.wooz86.musicbrainz.impl.dto.Url;
 
-import java.io.IOException;
 import java.net.URI;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MusicBrainzArtistApi extends AbstractMusicBrainzApi implements MusicBrainzApi<MusicBrainzArtist> {
 
-    public MusicBrainzArtistApi(MusicBrainzApiConfiguration configuration) throws GeneralSecurityException, IOException {
+    public MusicBrainzArtistApi(MusicBrainzApiConfiguration configuration) throws MusicBrainzException {
         super(configuration);
     }
 
-    public MusicBrainzArtist getByMBID(UUID mbid) throws MusicBrainzApiException {
+    public MusicBrainzArtist getByMBID(UUID mbid) throws MusicBrainzException {
         URI requestUri = buildRequestUri(mbid);
 
         Artist artist = dispatchRequest(requestUri, Artist.class);

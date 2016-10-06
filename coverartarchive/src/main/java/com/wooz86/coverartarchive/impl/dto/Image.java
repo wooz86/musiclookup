@@ -1,27 +1,13 @@
 package com.wooz86.coverartarchive.impl.dto;
 
+import com.google.api.client.util.Key;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+public class Image {
 
-import java.io.Serializable;
+    @Key("image")
+    private String url;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Image implements Serializable {
-
-    private String image;
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    @Override
-    public String toString() {
-        return "Image{" +
-                "image='" + image +
-                '}';
+    public String getUrl() {
+        return url;
     }
 }

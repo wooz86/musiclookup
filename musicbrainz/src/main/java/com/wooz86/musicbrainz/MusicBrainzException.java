@@ -1,12 +1,12 @@
 package com.wooz86.musicbrainz;
 
-public class MusicBrainzApiException extends Throwable {
+public class MusicBrainzException extends Throwable {
 
-    public MusicBrainzApiException(String message) {
+    public MusicBrainzException(String message) {
         super(message);
     }
 
-    public MusicBrainzApiException(String message, Throwable cause) {
+    public MusicBrainzException(String message, Throwable cause) {
         super(message, cause);
     }
 }

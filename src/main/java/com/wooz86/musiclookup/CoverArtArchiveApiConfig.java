@@ -1,15 +1,15 @@
 package com.wooz86.musiclookup;
 
 import com.wooz86.coverartarchive.CoverArtArchiveApi;
-import com.wooz86.coverartarchive.impl.CoverArtArchiveApiConfiguration;
+import com.wooz86.coverartarchive.CoverArtArchiveException;
+import com.wooz86.coverartarchive.impl.Configuration;
 import com.wooz86.coverartarchive.impl.CoverArtArchiveApiImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestOperations;
 
-@Configuration
+@org.springframework.context.annotation.Configuration
 //@PropertySource("classpath:application.properties")
 public class CoverArtArchiveApiConfig {
 
@@ -23,14 +23,14 @@ public class CoverArtArchiveApiConfig {
     }
 
     @Bean
-    public CoverArtArchiveApi coverArtArchiveApi() {
-        CoverArtArchiveApiConfiguration configuration = getConfiguration();
+    public CoverArtArchiveApi coverArtArchiveApi() throws CoverArtArchiveException {
+        Configuration configuration = getConfiguration();
 
-        return new CoverArtArchiveApiImpl(restOperations, configuration);
+        return new CoverArtArchiveApiImpl(configuration);
     }
 
-    private CoverArtArchiveApiConfiguration getConfiguration() {
-        CoverArtArchiveApiConfiguration coverArtArchiveApiConfiguration = new CoverArtArchiveApiConfiguration();
+    private Configuration getConfiguration() {
+        Configuration coverArtArchiveApiConfiguration = new Configuration();
         coverArtArchiveApiConfiguration.setBaseUrl(env.getProperty("coverartarchive.baseUrl"));
         coverArtArchiveApiConfiguration.setEndpoint(env.getProperty("coverartarchive.endpoint"));
 

@@ -1,17 +1,13 @@
 package com.wooz86.mediawiki.impl.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.api.client.util.Key;
 
-import java.io.Serializable;
+public class Page {
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Page implements Serializable {
+    @Key("extract")
+    private String description;
 
-    @Key
-    private String extract;
-
-    public String getExtract() {
-        return extract;
+    public String getDescription() {
+        return description;
     }
 }

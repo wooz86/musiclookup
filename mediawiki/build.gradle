@@ -1,8 +1,8 @@
 apply plugin: 'java'
 
 jar {
-	baseName = 'mediawiki'
-	version = '0.0.1'
+    baseName = 'mediawiki'
+    version = '0.0.1'
 }
 
 sourceCompatibility = 1.8

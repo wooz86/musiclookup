@@ -1,5 +1,6 @@
 package com.wooz86.musiclookup;
 
+import com.wooz86.mediawiki.MediaWikiException;
 import com.wooz86.mediawiki.impl.MediaWikiApiConfiguration;
 import com.wooz86.mediawiki.impl.MediaWikiApiImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestOperations;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 @Configuration
 public class MediaWikiApiConfig {
@@ -24,7 +22,7 @@ public class MediaWikiApiConfig {
     }
 
     @Bean
-    public MediaWikiApiImpl mediaWikiApi() throws GeneralSecurityException, IOException {
+    public MediaWikiApiImpl mediaWikiApi() throws MediaWikiException {
         MediaWikiApiConfiguration configuration = getConfiguration();
 
         return new MediaWikiApiImpl(configuration);

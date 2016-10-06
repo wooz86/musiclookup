@@ -1,50 +1,82 @@
 package com.wooz86.coverartarchive.impl;
 
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonObjectParser;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.wooz86.coverartarchive.CoverArtArchiveApi;
-import com.wooz86.coverartarchive.CoverArtArchiveApiException;
+import com.wooz86.coverartarchive.CoverArtArchiveException;
 import com.wooz86.coverartarchive.impl.dto.Image;
 import com.wooz86.coverartarchive.impl.dto.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestOperations;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
 public class CoverArtArchiveApiImpl implements CoverArtArchiveApi {
 
-    private static final Logger log = LoggerFactory.getLogger(CoverArtArchiveApiImpl.class);
+    private Configuration configuration;
+    private NetHttpTransport transport;
 
-    private RestOperations restClient;
-    private CoverArtArchiveApiConfiguration configuration;
-
-    public CoverArtArchiveApiImpl(RestOperations restClient, CoverArtArchiveApiConfiguration configuration) {
-        this.restClient = restClient;
+    public CoverArtArchiveApiImpl(Configuration configuration) throws CoverArtArchiveException {
         this.configuration = configuration;
+        setTransport();
     }
 
-    public String getImageUrlByMBID(UUID mbid) throws CoverArtArchiveApiException {
-        String requestUrl = buildRequestUrl(mbid);
-
-        Response response = makeRequest(requestUrl, mbid);
-        log.info(response.toString());
-
-        List<Image> images = response.getImages();
-        Image firstImage = images.get(0);
-        String imageUrl = firstImage.getImage();
-
-        return imageUrl;
-    }
-
-    private Response makeRequest(String requestUrl, UUID mbid) throws CoverArtArchiveApiException {
+    private void setTransport() throws CoverArtArchiveException {
         try {
-            return restClient.getForObject(requestUrl, Response.class);
-        } catch (Exception e) {
-            throw new CoverArtArchiveApiException("Could not find cover art for for album with MBID" + mbid.toString());
+            // @todo Extract dependency and use DI instead
+            this.transport = GoogleNetHttpTransport.newTrustedTransport();
+        } catch (Throwable e) {
+            throw new CoverArtArchiveException("Invalid transport.", e);
         }
     }
 
-    private String buildRequestUrl(UUID mbid) {
-        return configuration.getBaseUrl() + configuration.getEndpoint() + mbid.toString();
+    public String getImageUrlByMBID(UUID mbid) throws CoverArtArchiveException {
+        URI requestUri = buildRequestUri(mbid);
+
+        Response response = dispatchRequest(requestUri, Response.class);
+
+        List<Image> images = response.getImages();
+        Image firstImage = images.get(0);
+
+        return firstImage.getUrl();
+    }
+
+    private Response dispatchRequest(URI uri, Class<Response> responseClass) throws CoverArtArchiveException {
+        try {
+            HttpRequest httpRequest = buildRequest(uri);
+            HttpResponse response = httpRequest.execute();
+
+            return response.parseAs(responseClass);
+        } catch (Throwable e) {
+            throw new CoverArtArchiveException("Could not find cover art for album.", e);
+        }
+    }
+
+    private HttpRequest buildRequest(URI uri) throws IOException {
+        JacksonFactory jacksonFactory = new JacksonFactory();
+
+        HttpRequestFactory requestFactory = transport.createRequestFactory(request -> {
+            JsonObjectParser parser = new JsonObjectParser(jacksonFactory);
+            request.setParser(parser);
+        });
+
+        return requestFactory.buildGetRequest(new GenericUrl(uri));
+    }
+
+    private URI buildRequestUri(UUID mbid) throws CoverArtArchiveException {
+        String uriString = configuration.getBaseUrl() + configuration.getEndpoint() + mbid.toString();
+
+        try {
+            return new URI(uriString);
+        } catch (Throwable e) {
+            throw new CoverArtArchiveException("Invalid syntax for URI.", e);
+        }
     }
 }

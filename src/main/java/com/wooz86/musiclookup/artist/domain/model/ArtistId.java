@@ -3,15 +3,15 @@ package com.wooz86.musiclookup.artist.domain.model;
 import com.wooz86.musiclookup.artist.domain.shared.ValueObject;
 
 public class ArtistId implements ValueObject<ArtistId> {
-    
-    private String id;
 
-    public String getId() {
-        return id;
-    }
+    private String id;
 
     public ArtistId(String id) {
         this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
