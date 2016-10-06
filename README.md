@@ -16,7 +16,7 @@ This package is the base for the application, where you can find the entrypoint 
     * `infrastructure` - Contains code which is of infrastructural type and does not belong in the domain layer. Examples of such code is the implementation of `ArtistRepository` and the `ArtistService`
     * `interfaces` - This is the part of the application which houses the REST-API but could have other
      
-There are also three other folder containing the following:
+There are also three other folders containing the following:
 * `coverartarchive` - Contains the interface and an implementation of that interface for the [Cover Art Archive API](https://musicbrainz.org/doc/Cover_Art_Archive/API). 
 * `mediawiki` - Contains the interface and an implementation of that interface for the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page). 
 * `musicbrainz` - Contains the interface and an implementation of that interface for the [MusicBrainz API](https://musicbrainz.org/doc/Development/JSON_Web_Service).
@@ -50,6 +50,7 @@ The first command will build a jar file and the second will run the jar file usi
 The application can be run in a Docker container. Before trying this, make sure you have 
 [Docker](http://www.docker.com/products/docker) installed before continuing. Then run the following commands in the
 project root.
+
 1. Build the Docker image: `./gradlew build buildDocker`
 2. Running a Docker container `docker run -p 8080:8080 -t wooz86/musiclookup`. The container will now be running
 in the foreground. To exit, press Ctrl+C.
@@ -205,4 +206,4 @@ Example response for Metallica:
 * Improve async requests
 * Domain model clean up
 * Logging
-* Implement Redis as backing store for Cache.
+* Implement a backing store for Cache (done in-memory as of now).
