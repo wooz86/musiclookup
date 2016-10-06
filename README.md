@@ -7,7 +7,8 @@ Cover Art Archive. The application is based on [Spring Boot](http://projects.spr
 
 ## Project Structure
 
-There are 3 packages located outside of the project root, in `src/main/java/com/wooz86/`, these are supposed to be able to be reused in the future, these are:
+The project is setup as a Gradle multi-project build. The root project is used for the Musiclookup application. 
+There are also three other folder containing the following:
 * `coverartarchive` - Contains the interface and an implementation of that interface for the [Cover Art Archive API](https://musicbrainz.org/doc/Cover_Art_Archive/API). 
 * `mediawiki` - Contains the interface and an implementation of that interface for the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page). 
 * `musicbrainz` - Contains the interface and an implementation of that interface for the [MusicBrainz API](https://musicbrainz.org/doc/Development/JSON_Web_Service).
