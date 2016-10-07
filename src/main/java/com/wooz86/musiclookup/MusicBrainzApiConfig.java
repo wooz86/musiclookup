@@ -1,6 +1,7 @@
 package com.wooz86.musiclookup;
 
 import com.wooz86.musicbrainz.MusicBrainzApi;
+import com.wooz86.musicbrainz.MusicBrainzArtist;
 import com.wooz86.musicbrainz.MusicBrainzException;
 import com.wooz86.musicbrainz.impl.MusicBrainzApiConfiguration;
 import com.wooz86.musicbrainz.impl.MusicBrainzArtistApi;
@@ -23,7 +24,7 @@ public class MusicBrainzApiConfig {
     }
 
     @Bean
-    public MusicBrainzApi musicBrainzApi() throws MusicBrainzException {
+    public MusicBrainzApi<MusicBrainzArtist> musicBrainzArtistApi() throws MusicBrainzException {
         MusicBrainzApiConfiguration configuration = getConfiguration();
 
         return new MusicBrainzArtistApi(configuration);
