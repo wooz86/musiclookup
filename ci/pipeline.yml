@@ -1,4 +1,4 @@
-resources:  
+resources:
   - name: source-code
     type: git
     source:
@@ -11,4 +11,4 @@ jobs:
       - get: source-code
         trigger: true
       - task: gradle-build
-        file: musiclookup/pipeline/build.yml
+        file: source-code/ci/build.yml
