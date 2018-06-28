@@ -9,4 +9,5 @@ inputs:
   - name: source-code
 
 run:
-  path: source-code/ci/build.sh
+  path: "source-code/gradlew"
+  args: ["--no-daemon", "build"]
