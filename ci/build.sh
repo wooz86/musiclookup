@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./source-code/gradlew --no-daemon build
+./source-code/gradlew wrapper && ./source-code/gradlew --no-daemon build
