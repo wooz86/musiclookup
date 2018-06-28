@@ -8,6 +8,8 @@ image_resource:
 inputs:
   - name: source-code
 
+
 run:
-  path: "source-code/gradlew"
-  args: ["--no-daemon", "build"]
+  path: /bin/bash
+  args:
+    - source-code/ci/build.sh
