@@ -8,8 +8,5 @@ image_resource:
 inputs:
   - name: source-code
 
-
 run:
-  path: /bin/bash
-  args:
-    - source-code/ci/build.sh
+  path: source-code/ci/build.sh
