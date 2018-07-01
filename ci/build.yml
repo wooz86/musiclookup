@@ -8,5 +8,9 @@ image_resource:
 inputs:
   - name: source-code
 
+outputs:
+  - name: jar-file
+    path: source-code/build/libs
+
 run:
   path: source-code/ci/build.sh

@@ -21,8 +21,8 @@ apply plugin: 'docker'
 
 jar {
     baseName = 'musiclookup'
-    version = '0.0.1'
 }
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -41,16 +41,4 @@ dependencies {
     compile("org.springframework:spring-context")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-}
-
-task buildDocker(type: Docker, dependsOn: build) {
-    push = false
-    applicationName = jar.baseName
-    dockerfile = file('src/main/docker/Dockerfile')
-    doFirst {
-        copy {
-            from jar
-            into stageDir
-        }
-    }
 }

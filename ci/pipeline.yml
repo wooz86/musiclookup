@@ -3,12 +3,37 @@ resources:
     type: git
     source:
       uri: https://github.com/wooz86/musiclookup.git
+      branch: master
+
+  - name: ci
+    type: git
+    source:
+      uri: https://github.com/wooz86/musiclookup.git
+      branch: master
+
+  - name: dockerfile
+    type: git
+    source:
+      uri: https://github.com/wooz86/musiclookup.git
+      branch: master
+      paths: [Dockerfile]
+
+  - name: docker-image
+    type: docker-image
+    source:
+      email: ((docker-hub-email))
+      username: ((docker-hub-username))
+      password: ((docker-hub-password))
+      repository: ((docker-hub-username))/musiclookup
 
 jobs:
   - name: build
     public: true
+    serial: true
     plan:
       - get: source-code
         trigger: true
       - task: gradle-build
-        file: source-code/ci/build.yml
+        file: ci/build.yml
+      - put: docker-image
+        file: ci/create-docker-image.yml
