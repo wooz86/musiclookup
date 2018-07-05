@@ -15,12 +15,19 @@ resources:
 
 jobs:
   - name: build
-    public: true
-    serial: true
     plan:
       - get: source-code
         trigger: true
       - task: gradle-build
-        file: source-code/ci/build.yml
+        file: source-code/ci/gradle-build.yml
+      - task: prepare-docker-build
+        config:
+          inputs:
+            - name: jar-file
+          outputs:
+            - name: docker-files
+          run:
+            path: cp jar-file/* docker-files/*
       - put: docker-image
-        params: {build: source-code/build-docker}
+        params:
+          build: docker-files
