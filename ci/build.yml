@@ -8,9 +8,5 @@ image_resource:
 inputs:
   - name: source-code
 
-outputs:
-  - name: jar-file
-    path: build-docker
-
 run:
   path: source-code/ci/build.sh
