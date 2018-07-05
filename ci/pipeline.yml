@@ -22,6 +22,7 @@ jobs:
         file: source-code/ci/gradle-build.yml
       - task: prepare-docker-build
         config:
+          platform: linux
           inputs:
             - name: jar-file
           outputs:
