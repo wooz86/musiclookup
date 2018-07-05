@@ -2,7 +2,9 @@
 
 export GRADLE_USER_HOME="./source-code/.gradle"
 
-./source-code/gradlew build
+cd source-code
+
+./gradlew build
 mkdir build-docker
 
 cp Dockerfile build-docker
