@@ -10,8 +10,7 @@ inputs:
 
 outputs:
   - name: jar-file
-    path: build/libs
+    path: source-code/build/libs
 
 run:
-  user: root
   path: source-code/ci/gradle-build.sh
