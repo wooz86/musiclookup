@@ -1,12 +1,16 @@
-config:
-  platform: linux
-  image_resource:
-    type: docker-image
-    source: {repository: busybox}
-  inputs:
-    - name: source-code
-    - name: jar-file
-  outputs:
-    - name: docker-files
-  run:
-    path: ./source-code/ci/prepare-docker-build.sh
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: busybox}
+
+inputs:
+  - name: source-code
+  - name: jar-file
+
+outputs:
+  - name: docker-files
+
+run:
+  path: ./source-code/ci/prepare-docker-build.sh

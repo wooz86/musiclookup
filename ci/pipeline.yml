@@ -21,7 +21,7 @@ jobs:
       - task: gradle-build
         file: source-code/ci/gradle-build.yml
       - task: prepare-docker-build
-        file: prepare-docker-build.yml
+        file: source-code/ci/prepare-docker-build.yml
       - put: docker-image
         params:
           build: docker-files
