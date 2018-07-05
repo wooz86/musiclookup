@@ -36,4 +36,4 @@ jobs:
       - task: gradle-build
         file: ci/build.yml
       - put: docker-image
-        file: ci/create-docker-image.yml
+        params: {build: source-code}
