@@ -23,12 +23,17 @@ jobs:
       - task: prepare-docker-build
         config:
           platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: busybox}
           inputs:
+            - name: source-code
             - name: jar-file
           outputs:
             - name: docker-files
+              path: jar-file
           run:
-            path: cp jar-file/* docker-files/*
+            path: cp source-code/Dockerfile jar-file/
       - put: docker-image
         params:
           build: docker-files
