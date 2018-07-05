@@ -22,5 +22,22 @@ jobs:
         trigger: true
       - task: gradle-build
         file: source-code/ci/build.yml
+      - task: debug
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: ubuntu
+              tag: "latest"
+          inputs:
+          - name: jar-file
+          run:
+            path: sh
+            args:
+            - -exc
+            - |
+              pwd
+              ls -la .
       - put: docker-image
         params: {build: source-code}
