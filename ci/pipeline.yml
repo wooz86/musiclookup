@@ -11,13 +11,6 @@ resources:
       uri: https://github.com/wooz86/musiclookup.git
       branch: master
 
-  - name: dockerfile
-    type: git
-    source:
-      uri: https://github.com/wooz86/musiclookup.git
-      branch: master
-      paths: [Dockerfile]
-
   - name: docker-image
     type: docker-image
     source:
