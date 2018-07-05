@@ -13,4 +13,5 @@ outputs:
     path: build/libs
 
 run:
+  user: root
   path: source-code/ci/gradle-build.sh
