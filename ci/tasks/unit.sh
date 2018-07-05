@@ -5,5 +5,5 @@ export GRADLE_OPTS=-Dorg.gradle.native=false
 
 cd source-code
 
-gradlew -v
-gradlew clean test
+./gradlew -v
+./gradlew clean test
