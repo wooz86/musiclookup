@@ -1,3 +1,4 @@
+
 ---
 platform: linux
 
@@ -13,4 +14,4 @@ outputs:
     path: build/libs
 
 run:
-  path: source-code/ci/gradle-build.sh
+  path: source-code/ci/tasks/unit.sh
