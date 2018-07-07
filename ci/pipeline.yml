@@ -1,3 +1,10 @@
+resource_types:
+  - name: sonar-runner
+    type: docker-image
+    source:
+      repository: cathive/concourse-sonarqube-resource
+      tag: latest
+
 resources:
   - name: source-code
     type: git
@@ -5,6 +12,22 @@ resources:
       uri: https://github.com/wooz86/musiclookup.git
       branch: master
 
+  - name: version
+    type: semver
+    source:
+      bucket: musiclookup-pipeline-artifacts
+      key: current-version
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      initial_version: 1.0.0
+
+  - name: musiclookup-release
+    type: s3
+    source:
+      bucket: musiclookup-pipeline-artifacts
+      regexp: spring-music-(.*).war
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
 
 jobs:
   - name: unit
@@ -13,3 +36,18 @@ jobs:
       trigger: true
     - task: unit
       file: source-code/ci/tasks/unit.yml
+
+  - name: build-binary
+    plan:
+    - get: source-code
+      passed: [unit]
+      trigger: true
+    - get: version
+      params: {bump: patch}
+    - task: build-artifact
+      timeout: 5m
+      file: source-code/ci/tasks/build-artifact.yml
+    - put: musiclookup-release
+      params: {from: source-code/build/libs/musiclookup-.*.jar}
+    - put: version
+      params: {file: version/number}

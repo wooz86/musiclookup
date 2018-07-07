@@ -12,6 +12,7 @@ buildscript {
 }
 
 group = 'wooz86'
+version = "${projVersion ?: 'unknown'}"
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -19,17 +20,20 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'docker'
 
-jar {
-    baseName = 'musiclookup'
-}
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8.1'
+}
+
+jar {
+  baseName = 'musiclookup'
+}
 
 repositories {
     mavenCentral()
 }
-
 
 dependencies {
     compile project(':musicbrainz')
