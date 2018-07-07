@@ -39,6 +39,7 @@ jobs:
       file: source-code/ci/tasks/unit.yml
 
   - name: build-binary
+    serial: true
     plan:
     - get: source-code
       passed: [unit]
