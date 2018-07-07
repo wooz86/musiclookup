@@ -16,6 +16,7 @@ resources:
     type: semver
     source:
       bucket: musiclookup-pipeline-artifacts
+      region_name: eu-central-1
       key: current-version
       access_key_id: ((s3-access-key-id))
       secret_access_key: ((s3-secret-access-key))
@@ -25,7 +26,7 @@ resources:
     type: s3
     source:
       bucket: musiclookup-pipeline-artifacts
-      regexp: spring-music-(.*).war
+      regexp: musiclookup-(.*).war
       access_key_id: ((s3-access-key-id))
       secret_access_key: ((s3-secret-access-key))
 
