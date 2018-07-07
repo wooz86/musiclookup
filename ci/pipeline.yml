@@ -50,6 +50,6 @@ jobs:
       timeout: 5m
       file: source-code/ci/tasks/build-artifact.yml
     - put: musiclookup-release
-      params: {from: source-code/build/libs/musiclookup-.*.jar}
+      params: {from: build-artifact-output/musiclookup-.*.jar}
     - put: version
       params: {file: version/number}
