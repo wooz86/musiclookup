@@ -26,7 +26,7 @@ resources:
     type: s3
     source:
       bucket: musiclookup-pipeline-artifacts
-      regexp: musiclookup-(.*).war
+      regexp: musiclookup-(.*).jar
       access_key_id: ((s3-access-key-id))
       secret_access_key: ((s3-secret-access-key))
 
@@ -50,6 +50,6 @@ jobs:
       timeout: 5m
       file: source-code/ci/tasks/build-artifact.yml
     - put: musiclookup-release
-      params: {from: build-artifact-output/musiclookup-.*.jar}
+      params: {file: build-artifact-output/musiclookup-.*.jar}
     - put: version
       params: {file: version/number}
