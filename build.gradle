@@ -7,18 +7,16 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('se.transmode.gradle:gradle-docker:1.2')
     }
 }
 
 group = 'wooz86'
-version = "${projVersion ?: 'unknown'}"
+version = '1.0'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'docker'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -29,6 +27,7 @@ task wrapper(type: Wrapper) {
 
 jar {
   baseName = 'musiclookup'
+  version = Project.hasProperty('projVersion') ? Project.property('projVersion') : 'UNKNOWN'
 }
 
 repositories {
