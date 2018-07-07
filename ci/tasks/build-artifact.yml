@@ -11,7 +11,6 @@ inputs:
 
 outputs:
   - name: build-artifact-output
-    path: build/libs
 
 run:
   path: source-code/ci/tasks/build-artifact.sh

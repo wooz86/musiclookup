@@ -6,3 +6,5 @@ version=`cat version/number`
 
 cd source-code
 ./gradlew assemble -PprojVersion=$version
+
+cp build/libs/* ../build-artifact-output
