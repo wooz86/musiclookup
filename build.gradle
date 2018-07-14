@@ -38,5 +38,7 @@ dependencies {
 
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('com.google.api-client:google-api-client-jackson2:1.22.0')
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

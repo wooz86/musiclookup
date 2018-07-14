@@ -1,11 +1,6 @@
 package com.wooz86.musicbrainz.impl;
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.http.*;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.wooz86.musicbrainz.MusicBrainzException;
@@ -18,20 +13,11 @@ import java.util.UUID;
 abstract class AbstractMusicBrainzApi {
 
     private MusicBrainzApiConfiguration configuration;
-    private NetHttpTransport netHttpTransport;
+    private HttpTransport transport;
 
-    AbstractMusicBrainzApi(MusicBrainzApiConfiguration configuration) throws MusicBrainzException {
+    AbstractMusicBrainzApi(HttpTransport transport, MusicBrainzApiConfiguration configuration) {
+        this.transport = transport;
         this.configuration = configuration;
-        setTransport();
-    }
-
-    private void setTransport() throws MusicBrainzException {
-        try {
-            // @todo Extract dependency and use DI instead
-            this.netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        } catch (Throwable e) {
-            throw new MusicBrainzException("Invalid transport.", e);
-        }
     }
 
     URI buildRequestUri(UUID mbid) throws MusicBrainzException {
@@ -63,7 +49,7 @@ abstract class AbstractMusicBrainzApi {
     private HttpRequest buildRequest(URI uri) throws IOException {
         JacksonFactory jacksonFactory = new JacksonFactory();
 
-        HttpRequestFactory requestFactory = netHttpTransport.createRequestFactory(request -> {
+        HttpRequestFactory requestFactory = transport.createRequestFactory(request -> {
             JsonObjectParser parser = new JsonObjectParser(jacksonFactory);
             request.setParser(parser);
         });

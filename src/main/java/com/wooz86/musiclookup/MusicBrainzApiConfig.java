@@ -1,5 +1,6 @@
 package com.wooz86.musiclookup;
 
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.wooz86.musicbrainz.MusicBrainzApi;
 import com.wooz86.musicbrainz.MusicBrainzArtist;
 import com.wooz86.musicbrainz.MusicBrainzException;
@@ -10,6 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestOperations;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 @Configuration
 public class MusicBrainzApiConfig {
@@ -24,10 +28,10 @@ public class MusicBrainzApiConfig {
     }
 
     @Bean
-    public MusicBrainzApi<MusicBrainzArtist> musicBrainzArtistApi() throws MusicBrainzException {
+    public MusicBrainzApi<MusicBrainzArtist> musicBrainzArtistApi() throws GeneralSecurityException, IOException, MusicBrainzException {
         MusicBrainzApiConfiguration configuration = getConfiguration();
 
-        return new MusicBrainzArtistApi(configuration);
+        return new MusicBrainzArtistApi(GoogleNetHttpTransport.newTrustedTransport(), configuration);
     }
 
     private MusicBrainzApiConfiguration getConfiguration() {

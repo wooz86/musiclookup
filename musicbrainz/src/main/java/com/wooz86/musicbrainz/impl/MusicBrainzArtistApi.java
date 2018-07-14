@@ -1,5 +1,6 @@
 package com.wooz86.musicbrainz.impl;
 
+import com.google.api.client.http.HttpTransport;
 import com.wooz86.musicbrainz.MusicBrainzAlbum;
 import com.wooz86.musicbrainz.MusicBrainzApi;
 import com.wooz86.musicbrainz.MusicBrainzArtist;
@@ -16,8 +17,8 @@ import java.util.stream.Collectors;
 
 public class MusicBrainzArtistApi extends AbstractMusicBrainzApi implements MusicBrainzApi<MusicBrainzArtist> {
 
-    public MusicBrainzArtistApi(MusicBrainzApiConfiguration configuration) throws MusicBrainzException {
-        super(configuration);
+    public MusicBrainzArtistApi(HttpTransport transport, MusicBrainzApiConfiguration configuration) {
+        super(transport, configuration);
     }
 
     public MusicBrainzArtist getByMBID(UUID mbid) throws MusicBrainzException {
