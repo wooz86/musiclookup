@@ -10,16 +10,14 @@ buildscript {
     }
 }
 
-group = 'wooz86'
-version = '1.0'
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
+group = 'wooz86'
+version = '1.0'
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.8.1'
@@ -38,9 +36,7 @@ dependencies {
     compile project(':mediawiki')
     compile project(':coverartarchive')
 
-    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile("org.springframework:spring-context")
-
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
