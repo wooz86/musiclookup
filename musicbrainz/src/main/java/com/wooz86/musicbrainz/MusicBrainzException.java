@@ -1,6 +1,6 @@
 package com.wooz86.musicbrainz;
 
-public class MusicBrainzException extends Throwable {
+public class MusicBrainzException extends RuntimeException {
 
     public MusicBrainzException(String message) {
         super(message);

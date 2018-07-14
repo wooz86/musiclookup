@@ -1,6 +1,6 @@
 package com.wooz86.mediawiki;
 
-public class MediaWikiException extends Throwable {
+public class MediaWikiException extends RuntimeException {
 
     public MediaWikiException(String message) {
         super(message);

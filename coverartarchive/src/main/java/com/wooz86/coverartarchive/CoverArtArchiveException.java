@@ -1,6 +1,6 @@
 package com.wooz86.coverartarchive;
 
-public class CoverArtArchiveException extends Throwable {
+public class CoverArtArchiveException extends RuntimeException {
 
     public CoverArtArchiveException(String message) {
         super(message);
