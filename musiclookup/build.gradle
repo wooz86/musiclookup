@@ -24,7 +24,8 @@ task wrapper(type: Wrapper) {
 }
 
 jar {
-  version = Project.hasProperty('projVersion') ? Project.property('projVersion') : 'UNKNOWN'
+    baseName = 'musiclookup'
+    version = Project.hasProperty('projVersion') ? Project.property('projVersion') : 'UNKNOWN'
 }
 
 repositories {

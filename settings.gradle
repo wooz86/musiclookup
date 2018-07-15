@@ -1,5 +1,6 @@
-rootProject.name = 'musiclookup'
+rootProject.name = 'musiclookup-root'
 
 include 'musicbrainz'
 include 'mediawiki'
 include 'coverartarchive'
+include 'musiclookup'
