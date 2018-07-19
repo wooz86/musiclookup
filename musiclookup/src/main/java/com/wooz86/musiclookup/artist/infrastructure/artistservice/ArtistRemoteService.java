@@ -57,7 +57,7 @@ public class ArtistRemoteService {
         );
     }
 
-    public Artist getByMBID(UUID mbid) throws ArtistRemoteServiceException {
+    public Artist getByMBID(UUID mbid) {
         MusicBrainzArtist musicBrainzArtist = getArtistFromMusicBrainzApi(mbid);
         List<Album> albums = getAlbums(musicBrainzArtist);
         String description = getArtistDescription(musicBrainzArtist);
@@ -65,7 +65,7 @@ public class ArtistRemoteService {
         return new Artist(mbid, description, albums);
     }
 
-    private MusicBrainzArtist getArtistFromMusicBrainzApi(UUID mbid) throws ArtistRemoteServiceException {
+    private MusicBrainzArtist getArtistFromMusicBrainzApi(UUID mbid) {
         try {
             return (MusicBrainzArtist) musicBrainzApi.getByMBID(mbid);
         } catch (MusicBrainzException e) {
@@ -109,7 +109,7 @@ public class ArtistRemoteService {
         }
     }
 
-    private List<Album> getAlbums(MusicBrainzArtist musicBrainzArtist) throws ArtistRemoteServiceException {
+    private List<Album> getAlbums(MusicBrainzArtist musicBrainzArtist) {
         List<MusicBrainzAlbum> musicBrainzAlbums = musicBrainzArtist.getAlbums();
 
         List<CompletableFuture<Album>> futures = musicBrainzAlbums.stream()
