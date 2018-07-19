@@ -27,12 +27,12 @@ public class MediaWikiApiImpl implements MediaWikiApi {
     private MediaWikiApiConfiguration configuration;
     private NetHttpTransport netHttpTransport;
 
-    public MediaWikiApiImpl(MediaWikiApiConfiguration configuration) throws MediaWikiException {
+    public MediaWikiApiImpl(MediaWikiApiConfiguration configuration)  {
         this.configuration = configuration;
         setTransport();
     }
 
-    private void setTransport() throws MediaWikiException {
+    private void setTransport()  {
         try {
             // @todo Extract dependency and use DI instead
             this.netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -41,7 +41,7 @@ public class MediaWikiApiImpl implements MediaWikiApi {
         }
     }
 
-    public MediaWikiPage getPageByTitle(String pageTitle) throws MediaWikiException {
+    public MediaWikiPage getPageByTitle(String pageTitle)  {
         URI requestUri = buildRequestUri(pageTitle);
         Response response = dispatchRequest(requestUri, Response.class);
 
@@ -53,7 +53,7 @@ public class MediaWikiApiImpl implements MediaWikiApi {
         return new MediaWikiPage(pageId, pageTitle, page.getDescription());
     }
 
-    private Entry<String, Page> getFirstPageEntry(String pageTitle, Response response) throws MediaWikiException {
+    private Entry<String, Page> getFirstPageEntry(String pageTitle, Response response)  {
         Query query = response.getQuery();
         Map<String, Page> pages = query.getPages();
         Set<Entry<String, Page>> entries = pages.entrySet();
@@ -68,7 +68,7 @@ public class MediaWikiApiImpl implements MediaWikiApi {
         return pageEntry;
     }
 
-    private Response dispatchRequest(URI uri, Class<Response> responseClass) throws MediaWikiException {
+    private Response dispatchRequest(URI uri, Class<Response> responseClass)  {
         try {
             HttpRequest httpRequest = buildRequest(uri);
             HttpResponse response = httpRequest.execute();
@@ -90,7 +90,7 @@ public class MediaWikiApiImpl implements MediaWikiApi {
         return requestFactory.buildGetRequest(new GenericUrl(uri));
     }
 
-    private URI buildRequestUri(String pageTitle) throws MediaWikiException {
+    private URI buildRequestUri(String pageTitle)  {
         String uriString = configuration.getBaseUrl() + configuration.getQueryString() + pageTitle;
 
         try {

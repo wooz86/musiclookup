@@ -20,7 +20,7 @@ abstract class AbstractMusicBrainzApi {
         this.configuration = configuration;
     }
 
-    URI buildRequestUri(UUID mbid) throws MusicBrainzException {
+    URI buildRequestUri(UUID mbid)  {
         String baseUrl = configuration.getBaseUrl();
         String endpoint = configuration.getEndpoint();
         String mbidString = mbid.toString();
@@ -35,7 +35,7 @@ abstract class AbstractMusicBrainzApi {
         }
     }
 
-    <T> T dispatchRequest(URI uri, Class<T> responseType) throws MusicBrainzException {
+    <T> T dispatchRequest(URI uri, Class<T> responseType)  {
         try {
             HttpRequest httpRequest = buildRequest(uri);
             HttpResponse response = httpRequest.execute();

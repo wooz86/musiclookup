@@ -7,19 +7,15 @@ import com.wooz86.coverartarchive.impl.CoverArtArchiveApiImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.web.client.RestOperations;
 
 @org.springframework.context.annotation.Configuration
-//@PropertySource("classpath:application.properties")
 public class CoverArtArchiveApiConfig {
 
     private Environment env;
-    private RestOperations restOperations;
 
     @Autowired
-    public CoverArtArchiveApiConfig(Environment env, RestOperations restOperations) {
+    public CoverArtArchiveApiConfig(Environment env) {
         this.env = env;
-        this.restOperations = restOperations;
     }
 
     @Bean

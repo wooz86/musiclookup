@@ -21,7 +21,7 @@ public class MusicBrainzArtistApi extends AbstractMusicBrainzApi implements Musi
         super(transport, configuration);
     }
 
-    public MusicBrainzArtist getByMBID(UUID mbid) throws MusicBrainzException {
+    public MusicBrainzArtist getByMBID(UUID mbid)  {
         URI requestUri = buildRequestUri(mbid);
 
         Artist artist = dispatchRequest(requestUri, Artist.class);

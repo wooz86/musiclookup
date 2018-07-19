@@ -72,16 +72,6 @@ public class Artist implements Entity<Artist> {
         return sameIdentityAs(other);
     }
 
-//    @Override
-//    public int hashCode() {
-//        return artistId.hashCode();
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return artistId.toString();
-//    }
-
     @Override
     public boolean sameIdentityAs(final Artist other) {
         return other != null && artistId.sameValueAs(other.artistId);

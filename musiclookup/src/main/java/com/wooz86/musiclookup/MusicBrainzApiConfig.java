@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.web.client.RestOperations;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -19,12 +18,10 @@ import java.security.GeneralSecurityException;
 public class MusicBrainzApiConfig {
 
     private Environment env;
-    private RestOperations restOperations;
 
     @Autowired
-    public MusicBrainzApiConfig(Environment env, RestOperations restOperations) {
+    public MusicBrainzApiConfig(Environment env) {
         this.env = env;
-        this.restOperations = restOperations;
     }
 
     @Bean
